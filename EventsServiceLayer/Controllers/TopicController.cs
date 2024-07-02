@@ -11,8 +11,12 @@ namespace EventsServiceLayer.Controllers
     public class TopicController : ControllerBase
     {
         private readonly ITopicsCoveredRepo<TopicCovered> _topicrepo;
-        public TopicController(ITopicsCoveredRepo<TopicCovered> _topicrepo) {
+        private readonly ILogger<TopicController> _logger;
+
+        public TopicController(ITopicsCoveredRepo<TopicCovered> _topicrepo, ILogger<TopicController> logger)
+        {
             this._topicrepo = _topicrepo;
+            _logger = logger;
         }
 
         [HttpPost]
@@ -21,13 +25,21 @@ namespace EventsServiceLayer.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult AddTopic([FromBody] TopicCovered topicData)
         {
-            bool isSuccess = _topicrepo.AddTopic(topicData);
-            if (isSuccess)
+            try
             {
-                return Ok();
+                bool isSuccess = _topicrepo.AddTopic(topicData);
+                if (isSuccess)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
+            catch (Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
                 return NotFound();
             }
         }
@@ -38,13 +50,23 @@ namespace EventsServiceLayer.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetAllTopics()
         {
-            List<TopicCovered> allTopics=_topicrepo.GetAllTopics().ToList();
-            if (allTopics.Count > 0)
+            try
             {
-                return Ok(allTopics);
+
+
+                List<TopicCovered> allTopics = _topicrepo.GetAllTopics().ToList();
+                if (allTopics.Count > 0)
+                {
+                    return Ok(allTopics);
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
+            catch (Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
                 return NotFound();
             }
         }
@@ -55,13 +77,21 @@ namespace EventsServiceLayer.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetTopicById(Guid Id)
         {
-            TopicCovered topicExisting = _topicrepo.GetTopicById(Id);
-            if(!topicExisting.TopicId.Equals(Guid.Empty))
+            try
             {
-                return Ok(topicExisting);
+                TopicCovered topicExisting = _topicrepo.GetTopicById(Id);
+                if (!topicExisting.TopicId.Equals(Guid.Empty))
+                {
+                    return Ok(topicExisting);
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
+            catch (Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
                 return NotFound();
             }
 
@@ -73,13 +103,21 @@ namespace EventsServiceLayer.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetTopicByStaffId(Guid Id)
         {
-            List<TopicCovered> topics = _topicrepo.GetTopicsByStaff(Id).ToList();
-            if (topics.Count > 0)
+            try
             {
-                return Ok(topics);
+                List<TopicCovered> topics = _topicrepo.GetTopicsByStaff(Id).ToList();
+                if (topics.Count > 0)
+                {
+                    return Ok(topics);
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
+            catch (Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
                 return NotFound();
             }
 
@@ -91,13 +129,21 @@ namespace EventsServiceLayer.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetTopicOnLocationByStaff(Guid locationId, Guid staffId)
         {
-            List<TopicCovered> topics = _topicrepo.GetTopicsByStaffsOnLocation(staffId, locationId).ToList();
-            if (topics.Count > 0)
+            try
             {
-                return Ok(topics);
+                List<TopicCovered> topics = _topicrepo.GetTopicsByStaffsOnLocation(staffId, locationId).ToList();
+                if (topics.Count > 0)
+                {
+                    return Ok(topics);
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
+            catch (Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
                 return NotFound();
             }
 
@@ -109,16 +155,23 @@ namespace EventsServiceLayer.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetTopicForEventLocationByStaff(Guid eventId,Guid locationId, Guid staffId)
         {
-            List<TopicCovered> topics = _topicrepo.GetTopicsByStaffonLocationForEvent(staffId, locationId,eventId).ToList();
-            if (topics.Count > 0)
+            try
             {
-                return Ok(topics);
+                List<TopicCovered> topics = _topicrepo.GetTopicsByStaffonLocationForEvent(staffId, locationId, eventId).ToList();
+                if (topics.Count > 0)
+                {
+                    return Ok(topics);
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
+            catch (Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
                 return NotFound();
             }
-
         }
 
         [HttpPut]
@@ -127,13 +180,21 @@ namespace EventsServiceLayer.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult UpdateTopic(TopicCovered topic)
         {
-            bool isSuccess = _topicrepo.UpdateTopic(topic);
-            if (isSuccess)
+            try
             {
-                return Ok();
+                bool isSuccess = _topicrepo.UpdateTopic(topic);
+                if (isSuccess)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
+            catch (Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
                 return NotFound();
             }
         }
@@ -145,16 +206,23 @@ namespace EventsServiceLayer.Controllers
         [Route("DeleteTopic/{id}")]
         public IActionResult DeleteTopic(Guid id)
         {
-            bool isSuccess = _topicrepo.DeleteTopic(id);
-            if (isSuccess)
+            try
             {
-                return Ok();
+                bool isSuccess = _topicrepo.DeleteTopic(id);
+                if (isSuccess)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
+            catch (Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
                 return NotFound();
             }
-
         }
 
 

@@ -11,8 +11,12 @@ namespace EventsServiceLayer.Controllers
     public class EventAllocationController : ControllerBase
     {
         private readonly IEventAllocationDataRepo<EventAllocation> _eventalloc;
-        public EventAllocationController(IEventAllocationDataRepo<EventAllocation> _eventalloc) {
+        private readonly ILogger<EventAllocationController> _logger;
+
+        public EventAllocationController(IEventAllocationDataRepo<EventAllocation> _eventalloc, ILogger<EventAllocationController> logger)
+        {
             this._eventalloc = _eventalloc;
+            _logger = logger;
         }
 
         [HttpPost]
@@ -21,13 +25,21 @@ namespace EventsServiceLayer.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult AddEventAllocation([FromBody] EventAllocation eveAlloc)
         {
-            bool isSuccess = _eventalloc.AddEventAllocation(eveAlloc);
-            if (isSuccess)
+            try
             {
-                return Ok();
+                bool isSuccess = _eventalloc.AddEventAllocation(eveAlloc);
+                if (isSuccess)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
+            catch (Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
                 return NotFound();
             }
         }
@@ -38,13 +50,23 @@ namespace EventsServiceLayer.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetAllEventAllocation()
         {
-            List<EventAllocation> allEvents=_eventalloc.GetAllEventsAllocation().ToList();
-            if (allEvents.Count > 0)
+            try
             {
-                return Ok(allEvents);
+
+
+                List<EventAllocation> allEvents = _eventalloc.GetAllEventsAllocation().ToList();
+                if (allEvents.Count > 0)
+                {
+                    return Ok(allEvents);
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
+            catch (Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
                 return NotFound();
             }
         }
@@ -55,13 +77,23 @@ namespace EventsServiceLayer.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetEventAllocationById(Guid Id)
         {
-            EventAllocation eventExisting = _eventalloc.GetEventAllocationById(Id);
-            if(!eventExisting.EventAllocationId.Equals(Guid.Empty))
+            try
             {
-                return Ok(eventExisting);
+
+
+                EventAllocation eventExisting = _eventalloc.GetEventAllocationById(Id);
+                if (!eventExisting.EventAllocationId.Equals(Guid.Empty))
+                {
+                    return Ok(eventExisting);
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
+            catch (Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
                 return NotFound();
             }
 
@@ -73,16 +105,25 @@ namespace EventsServiceLayer.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetEventsByLocationId(Guid LocationId)
         {
-            List<EventAllocation> eventsExisting = _eventalloc.GetEventAllocatedByLocationId(LocationId).ToList();
-            if (eventsExisting.Count > 0)
+            try
             {
-                return Ok(eventsExisting);
+
+
+                List<EventAllocation> eventsExisting = _eventalloc.GetEventAllocatedByLocationId(LocationId).ToList();
+                if (eventsExisting.Count > 0)
+                {
+                    return Ok(eventsExisting);
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
+            catch (Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
                 return NotFound();
             }
-
         }
 
         [HttpGet]
@@ -91,13 +132,21 @@ namespace EventsServiceLayer.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetEventsByEventId(Guid Id)
         {
-            List<EventAllocation> eventsExisting = _eventalloc.GetAllocationsByEventId(Id).ToList();
-            if (eventsExisting.Count > 0)
+            try
             {
-                return Ok(eventsExisting);
+                List<EventAllocation> eventsExisting = _eventalloc.GetAllocationsByEventId(Id).ToList();
+                if (eventsExisting.Count > 0)
+                {
+                    return Ok(eventsExisting);
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
+            catch (Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
                 return NotFound();
             }
 
@@ -108,16 +157,23 @@ namespace EventsServiceLayer.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetEventStaffByEventLocation(Guid eventId,Guid locationId)
         {
-            List<EventAllocation> eventsExisting = _eventalloc.GetStaffAllocationByEvent(eventId,locationId).ToList();
-            if (eventsExisting.Count > 0)
+            try
             {
-                return Ok(eventsExisting);
+                List<EventAllocation> eventsExisting = _eventalloc.GetStaffAllocationByEvent(eventId, locationId).ToList();
+                if (eventsExisting.Count > 0)
+                {
+                    return Ok(eventsExisting);
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
+            catch (Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
                 return NotFound();
             }
-
         }
 
 
@@ -127,13 +183,21 @@ namespace EventsServiceLayer.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult UpdateEventAllocation(EventAllocation eventData)
         {
-            bool isSuccess = _eventalloc.UpdateEventAllocation(eventData);
-            if (isSuccess)
+            try
             {
-                return Ok();
+                bool isSuccess = _eventalloc.UpdateEventAllocation(eventData);
+                if (isSuccess)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
+            catch (Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
                 return NotFound();
             }
         }
@@ -145,13 +209,21 @@ namespace EventsServiceLayer.Controllers
         [Route("DeleteEventAllocation/{id}")]
         public IActionResult DeleteEventAllocation(Guid id)
         {
-            bool isSuccess = _eventalloc.DeleteEventAllocation(id);
-            if (isSuccess)
+            try
             {
-                return Ok();
+                bool isSuccess = _eventalloc.DeleteEventAllocation(id);
+                if (isSuccess)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
+            catch (Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
                 return NotFound();
             }
 
@@ -163,16 +235,25 @@ namespace EventsServiceLayer.Controllers
         [Route("DeleteEventAllocationByEventId/{id}/{locId}")]
         public IActionResult DeleteEventAllocationByEventId(Guid id, Guid locId)
         {
-            bool isSuccess = _eventalloc.DeleteEventAllocationByEventId(id,locId);
-            if (isSuccess)
+            try
             {
-                return Ok();
+
+
+                bool isSuccess = _eventalloc.DeleteEventAllocationByEventId(id, locId);
+                if (isSuccess)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
+            catch (Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
                 return NotFound();
             }
-
         }
 
 

@@ -11,8 +11,12 @@ namespace EventsServiceLayer.Controllers
     public class LocationController : ControllerBase
     {
         private readonly ICRUDDataRepo<Location> _locRepo;
-        public LocationController(ICRUDDataRepo<Location> locRepo) {
+        private readonly ILogger<LocationController> _logger;
+
+        public LocationController(ICRUDDataRepo<Location> locRepo, ILogger<LocationController> logger)
+        {
             _locRepo = locRepo;
+            _logger = logger;
         }
 
         [HttpPost]
@@ -21,13 +25,23 @@ namespace EventsServiceLayer.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult AddLocation([FromBody] Location locData)
         {
-            Location isSuccess = _locRepo.Add(locData);
-            if (isSuccess.LocationId!=Guid.Empty)
+            try
             {
-                return Ok();
+
+
+                Location isSuccess = _locRepo.Add(locData);
+                if (isSuccess.LocationId != Guid.Empty)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
+            catch (Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
                 return NotFound();
             }
         }
@@ -38,13 +52,23 @@ namespace EventsServiceLayer.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetAllLocation()
         {
-            List<Location> allLoc=_locRepo.GetAll().ToList();
-            if (allLoc.Count > 0)
+            try
             {
-                return Ok(allLoc);
+
+
+                List<Location> allLoc = _locRepo.GetAll().ToList();
+                if (allLoc.Count > 0)
+                {
+                    return Ok(allLoc);
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
+            catch (Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
                 return NotFound();
             }
         }
@@ -55,13 +79,23 @@ namespace EventsServiceLayer.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetLocationById(Guid Id)
         {
-            Location locExisting = _locRepo.GetById(Id);
-            if(!locExisting.LocationId.Equals(Guid.Empty))
+            try
             {
-                return Ok(locExisting);
+
+
+                Location locExisting = _locRepo.GetById(Id);
+                if (!locExisting.LocationId.Equals(Guid.Empty))
+                {
+                    return Ok(locExisting);
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
+            catch (Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
                 return NotFound();
             }
 
@@ -73,13 +107,23 @@ namespace EventsServiceLayer.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult UpdateLocation(Location locData)
         {
-            bool isSuccess = _locRepo.Update(locData);
-            if (isSuccess)
+            try
             {
-                return Ok();
+
+
+                bool isSuccess = _locRepo.Update(locData);
+                if (isSuccess)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
+            catch (Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
                 return NotFound();
             }
         }
@@ -91,16 +135,25 @@ namespace EventsServiceLayer.Controllers
         [Route("DeleteLocation/{id}")]
         public IActionResult DeleteLocation(Guid id)
         {
-            bool isSuccess = _locRepo.Delete(id);
-            if (isSuccess)
+            try
             {
-                return Ok();
+
+
+                bool isSuccess = _locRepo.Delete(id);
+                if (isSuccess)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
+            catch (Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
                 return NotFound();
             }
-
         }
 
 

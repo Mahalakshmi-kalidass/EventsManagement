@@ -11,8 +11,11 @@ namespace EventsServiceLayer.Controllers
     public class EventController : ControllerBase
     {
         private readonly ICRUDDataRepo<Event> _eventRepo;
-        public EventController(ICRUDDataRepo<Event> eventRepo) {
+        private readonly ILogger<EventController> _logger;
+        public EventController(ICRUDDataRepo<Event> eventRepo, ILogger<EventController> logger)
+        {
             _eventRepo = eventRepo;
+            _logger = logger;
         }
 
         [HttpPost]
@@ -21,15 +24,22 @@ namespace EventsServiceLayer.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult AddEvent([FromBody] Event eventData)
         {
-            Event isSuccess = _eventRepo.Add(eventData);
-            if (isSuccess.EventId!=Guid.Empty)
+            try
             {
-                return Ok(isSuccess);
-            }
-            else
-            {
+                Event isSuccess = _eventRepo.Add(eventData);
+                if (isSuccess.EventId != Guid.Empty)
+                {
+                    return Ok(isSuccess);
+                }
                 return NotFound();
             }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return NotFound();
+
+            }
+
         }
 
         [HttpGet]
@@ -38,13 +48,21 @@ namespace EventsServiceLayer.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetAllEvents()
        {
-            List<Event> allEvents = _eventRepo.GetAll().ToList();
-            if (allEvents.Count > 0)
+            try
             {
-                return Ok(allEvents);
+                List<Event> allEvents = _eventRepo.GetAll().ToList();
+                if (allEvents.Count > 0)
+                {
+                    return Ok(allEvents);
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
+            catch (Exception ex)
             {
+                _logger.LogError(ex.Message);
                 return NotFound();
             }
         }
@@ -55,15 +73,24 @@ namespace EventsServiceLayer.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetEventById(Guid Id)
         {
-            Event eventExisting = _eventRepo.GetById(Id);
-            if(!eventExisting.EventId.Equals(Guid.Empty))
+            try
             {
-                return Ok(eventExisting);
+                Event eventExisting = _eventRepo.GetById(Id);
+                if (!eventExisting.EventId.Equals(Guid.Empty))
+                {
+                    return Ok(eventExisting);
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
+            catch(Exception ex)
             {
+                _logger.LogError(ex.Message);
                 return NotFound();
             }
+            
 
         }
 
@@ -73,13 +100,23 @@ namespace EventsServiceLayer.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult UpdateEvent(Event eventData)
         {
-            bool isSuccess =_eventRepo.Update(eventData);
-            if (isSuccess)
+            try
             {
-                return Ok();
+
+
+                bool isSuccess = _eventRepo.Update(eventData);
+                if (isSuccess)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
+            catch (Exception ex)
             {
+                _logger.LogError(ex.Message);
                 return NotFound();
             }
         }
@@ -90,14 +127,24 @@ namespace EventsServiceLayer.Controllers
         [Route("DeleteEvent/{id}")]
         public IActionResult DeleteEvent(Guid id)
         {
-            bool isSuccess = _eventRepo.Delete(id);
-            if (isSuccess)
+            try
             {
-                return Ok();
+
+
+                bool isSuccess = _eventRepo.Delete(id);
+                if (isSuccess)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
+            catch(Exception e)
             {
-                  return NotFound();
+                _logger.LogError(e.Message);
+                return NotFound();
             }
 
         }

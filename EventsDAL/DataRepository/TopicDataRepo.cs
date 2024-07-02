@@ -30,7 +30,8 @@ namespace EventsDAL.DataRepository
             }
             catch (Exception ex)
             {
-                return false;
+                throw new Exception(ex.Message, ex);
+
             }
         }
 
@@ -52,7 +53,7 @@ namespace EventsDAL.DataRepository
             }
             catch (Exception ex)
             {
-                return false;
+                throw new Exception(ex.Message, ex);
             }
         }
 
@@ -67,8 +68,8 @@ namespace EventsDAL.DataRepository
             }
             catch (Exception ex)
             {
-                return Enumerable.Empty<TopicCovered>(); ;
-            }
+                throw new Exception(ex.Message, ex);
+            } 
         }
 
         public TopicCovered GetTopicById(Guid topicId)
@@ -87,7 +88,7 @@ namespace EventsDAL.DataRepository
             }
             catch (Exception ex)
             {
-                return new TopicCovered();
+                throw new Exception(ex.Message, ex);
             }
         }
 
@@ -107,7 +108,7 @@ namespace EventsDAL.DataRepository
             }
             catch (Exception ex)
             {
-                return Enumerable.Empty<TopicCovered>();
+                throw new Exception(ex.Message, ex);
             }
         }
 
@@ -129,7 +130,7 @@ namespace EventsDAL.DataRepository
             }
             catch (Exception ex)
             {
-                return Enumerable.Empty<TopicCovered>();
+                throw new Exception(ex.Message, ex);
             }
         }
 
@@ -151,7 +152,7 @@ namespace EventsDAL.DataRepository
             }
             catch (Exception ex)
             {
-                return Enumerable.Empty<TopicCovered>();
+                throw new Exception(ex.Message, ex);
             }
         }
 
@@ -182,7 +183,7 @@ namespace EventsDAL.DataRepository
             }
             catch (Exception ex)
             {
-                return false;
+                throw new Exception(ex.Message, ex);
             }
         }
     }

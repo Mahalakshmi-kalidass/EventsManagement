@@ -32,7 +32,7 @@ namespace EventsDAL.DataRepository
             }
             catch (Exception ex)
             {
-                return false;
+                throw new Exception(ex.Message, ex);
             }
         }
 
@@ -55,7 +55,8 @@ namespace EventsDAL.DataRepository
             }
             catch (Exception ex)
             {
-                return false;
+                throw new Exception(ex.Message, ex);
+
             }
         }
 
@@ -70,7 +71,8 @@ namespace EventsDAL.DataRepository
             }
             catch (Exception ex)
             {
-                return Enumerable.Empty<EventAllocation>(); ;
+                throw new Exception(ex.Message, ex);
+
             }
         }
 
@@ -91,7 +93,8 @@ namespace EventsDAL.DataRepository
             }
             catch (Exception ex)
             {
-                return Enumerable.Empty<EventAllocation>();
+                throw new Exception(ex.Message, ex);
+
             }
         }
 
@@ -111,7 +114,8 @@ namespace EventsDAL.DataRepository
             }
             catch (Exception ex)
             {
-                    return new EventAllocation();
+                throw new Exception(ex.Message, ex);
+
 
             }
         }
@@ -133,7 +137,8 @@ namespace EventsDAL.DataRepository
             }
             catch (Exception ex)
             {
-                return Enumerable.Empty<EventAllocation>();
+                throw new Exception(ex.Message, ex);
+
             }
         }
 
@@ -163,7 +168,8 @@ namespace EventsDAL.DataRepository
             }
             catch (Exception ex)
             {
-                return false;
+                throw new Exception(ex.Message, ex);
+
             }
         }
 
@@ -184,7 +190,8 @@ namespace EventsDAL.DataRepository
             }
             catch (Exception ex)
             {
-                return Enumerable.Empty<EventAllocation>();
+                throw new Exception(ex.Message, ex);
+
             }
         }
 
@@ -219,9 +226,10 @@ namespace EventsDAL.DataRepository
             }
             catch (Exception ex)
             {
-                return false;
+                throw new Exception(ex.Message, ex);
+
             }
-            
+
         }
     }
 }

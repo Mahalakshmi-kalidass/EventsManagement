@@ -11,8 +11,12 @@ namespace EventsServiceLayer.Controllers
     public class StaffController : ControllerBase
     {
         private readonly IStaffDataRepo<Staff> _staffrepo;
-        public StaffController(IStaffDataRepo<Staff> _staffrepo) {
+        private readonly ILogger<StaffController>  _logger;
+
+        public StaffController(IStaffDataRepo<Staff> _staffrepo, ILogger<StaffController> logger)
+        {
             this._staffrepo = _staffrepo;
+            _logger = logger;
         }
 
         [HttpPost]
@@ -21,13 +25,23 @@ namespace EventsServiceLayer.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult AddStaff([FromBody] Staff staffData)
         {
-            bool isSuccess = _staffrepo.AddStaff(staffData);
-            if (isSuccess)
+            try
             {
-                return Ok();
+
+
+                bool isSuccess = _staffrepo.AddStaff(staffData);
+                if (isSuccess)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
+            catch (Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
                 return NotFound();
             }
         }
@@ -38,13 +52,21 @@ namespace EventsServiceLayer.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetAllStaff()
         {
-            List<Staff> allStaff=_staffrepo.GetAllStaff().ToList();
-            if (allStaff.Count > 0)
+            try
             {
-                return Ok(allStaff);
+                List<Staff> allStaff = _staffrepo.GetAllStaff().ToList();
+                if (allStaff.Count > 0)
+                {
+                    return Ok(allStaff);
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
+            catch (Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
                 return NotFound();
             }
         }
@@ -55,16 +77,23 @@ namespace EventsServiceLayer.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetStaffById(Guid Id)
         {
-            Staff staffExisting = _staffrepo.GetStaffById(Id);
-            if(!staffExisting.StaffId.Equals(Guid.Empty))
+            try
             {
-                return Ok(staffExisting);
+                Staff staffExisting = _staffrepo.GetStaffById(Id);
+                if (!staffExisting.StaffId.Equals(Guid.Empty))
+                {
+                    return Ok(staffExisting);
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
+            catch (Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
                 return NotFound();
             }
-
         }
 
         [HttpGet]
@@ -73,13 +102,21 @@ namespace EventsServiceLayer.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetStaffByLocationId(Guid LocationId)
         {
-            List<Staff> staffExisting = _staffrepo.GetStaffsByLocationId(LocationId).ToList();
-            if (staffExisting.Count > 0)
+            try
             {
-                return Ok(staffExisting);
+                List<Staff> staffExisting = _staffrepo.GetStaffsByLocationId(LocationId).ToList();
+                if (staffExisting.Count > 0)
+                {
+                    return Ok(staffExisting);
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
+            catch (Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
                 return NotFound();
             }
 
@@ -91,13 +128,21 @@ namespace EventsServiceLayer.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult UpdateStaff(Staff staff)
         {
-            bool isSuccess = _staffrepo.UpdateStaff(staff);
-            if (isSuccess)
+            try
             {
-                return Ok();
+                bool isSuccess = _staffrepo.UpdateStaff(staff);
+                if (isSuccess)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
+            catch (Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
                 return NotFound();
             }
         }
@@ -109,13 +154,21 @@ namespace EventsServiceLayer.Controllers
         [Route("DeleteStaff/{id}")]
         public IActionResult DeleteStaff(Guid id)
         {
-            bool isSuccess = _staffrepo.DeleteStaff(id);
-            if (isSuccess)
+            try
             {
-                return Ok();
+                bool isSuccess = _staffrepo.DeleteStaff(id);
+                if (isSuccess)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
+            catch (Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
                 return NotFound();
             }
 

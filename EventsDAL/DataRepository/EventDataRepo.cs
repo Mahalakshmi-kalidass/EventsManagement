@@ -34,7 +34,7 @@ namespace EventsDAL.DataRepository
             }
             catch (Exception ex)
             {
-                return new Event();
+                throw new Exception(ex.Message);
             }
         }
 
@@ -56,7 +56,7 @@ namespace EventsDAL.DataRepository
             }
             catch (Exception ex)
             {
-                return false;
+                throw new Exception(ex.Message);
             }
         }
 
@@ -76,7 +76,7 @@ namespace EventsDAL.DataRepository
             }
             catch (Exception ex)
             {
-                return new Event();
+                throw new Exception(ex.Message);
             }
         }
 
@@ -91,7 +91,7 @@ namespace EventsDAL.DataRepository
             }
             catch (Exception ex)
             {
-                return Enumerable.Empty<Event>(); ;
+                throw new Exception(ex.Message);
             }
         }
 
@@ -125,7 +125,7 @@ namespace EventsDAL.DataRepository
             }
             catch (Exception ex)
             {
-                return false;
+                throw new Exception(ex.Message);
             }
         }
     }
