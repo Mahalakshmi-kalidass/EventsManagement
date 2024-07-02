@@ -1,0 +1,126 @@
+﻿
+@{
+    ViewData["Title"] = "Events";
+    Layout = "~/Views/Home/Shared/HomeLayout.cshtml";
+}
+@model List<EventsDAL.Models.Event>
+<nav aria-label="breadcrumb p-2">
+    <ol class="breadcrumb p-2">
+        <li class="breadcrumb-item active"><a asp-route="Home">Home</a></li>
+       
+    </ol>
+</nav>
+<h1>Events</h1>
+<div class="d-flex justify-content-between m-3">
+    <div class="d-flex align-items-center">
+        <a class="btn btn-primary align-middle" asp-route="NewEvent">New Event</a>
+    </div>
+    
+    <div class="form-group w-25">
+        <label>Search</label>
+        <input type="text" class="form-control" id="search">
+    </div>
+</div>
+<!--events card are displayed dynamically inside this div by js doing ajax and getting data-->
+<div id="eventList">
+
+</div>
+<!--Delete Modal-->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Are you sure. Do you want to delete?</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-secondary" data-bs-dismiss="modal">Cancel</a>
+                <a class="btn  btn-danger" id="confirmDelete">Delete</a>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts{
+    
+  @* <script>
+        $(document).ready(function () {
+            var eventDataforCard = "";
+             function loadEventData() {
+                $.ajax({
+                    url: 'https://localhost:44354/api/event/getallevent',
+                    type:'GET',
+                    success:function(data){
+                        console.log("I'm in");
+                        console.log(data);
+                        eventDataforCard = data;  //updating global variable 
+                        buildAllCards(data);
+                        
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+
+                })
+            }
+
+            function buildAllCards(eventdata) {
+                console.log("card building..");
+                //console.log(eventdata);
+                console.log(eventDataforCard);
+                var eventsDiv = $('#eventList');
+                eventsDiv.empty()
+
+                $.each(eventdata,function(index,event){
+                    console.log(`from for each:${JSON.stringify(event)}`);
+                    let built = buildCard(event);
+                    eventsDiv.append(built);
+                });
+
+            }
+
+            function buildCard(event) {
+                console.log(`single card build:${event}`);
+                let card = `
+                            <div class="card d-flex flex-row  justify-content-evenly  m-3">
+                            <!--Left-->
+                            <div class="card-body w-25 m-2 p-3 ">
+                                                <span class="badge bg-success d-inline"> ${new Date(event.eventDate).toLocaleString('en-US', { month: 'long' })} Event </span>
+                                                                        <p class=" m-1"> <i class="bi bi-calendar3 me-2"></i> <b> ${new Date(event.eventDate).toLocaleString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}</b></p>
+                                                <p class=" m-1"> <i class="bi bi-clock  me-2"></i> ${ new Date(event.eventDate).toLocaleString('en-US', { hour:'2-digit',minute:'2-digit', hour12:'true' })} </p>
+                            </div>
+                            <!--Middle-->
+                            <div class="card-body border-0 w-50 m-2 p-3">
+                                <h3>${event.eventName}</h3>
+                                <p>${event.eventDescription} </p>
+
+                            </div>
+                            <!--Right-->
+                            <div class="card-body  w-25 m-2 p-3 d-flex justify-content-center align-items-center">
+                                <a class="btn btn-primary " href="">Details</a>
+                            </div>
+
+                        </div>
+                          `;
+                return card;
+            }
+
+            loadEventData();
+            console.log(eventId);
+            $('#search').on('input', function () {
+                let searchVal = $(this).val().trim().toLowerCase();
+                console.log(searchVal);
+                var filtered = eventDataforCard.filter(function (event) {
+                    return event.eventName.toLowerCase().includes(searchVal) || event.eventDescription.toLowerCase().includes(searchVal);
+                })
+                buildAllCards(filtered);
+            })
+            
+        })
+    </script> *@
+   
+}

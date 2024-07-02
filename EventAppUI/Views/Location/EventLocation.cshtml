@@ -1,0 +1,262 @@
+﻿
+@{
+    ViewData["Title"] = "EventLocation";
+    Layout = "~/Views/Home/Shared/HomeLayout.cshtml";
+}
+@model List<EventsDAL.Models.Location>
+@{
+    var eventId = ViewBag.EventId;
+}
+<nav aria-label="breadcrumb p-2">
+    <ol class="breadcrumb p-2">
+        <li class="breadcrumb-item "><a href="/">Home</a></li>
+        <li class="breadcrumb-item active"><a  id="eventLocationCrum"> Event Location</a></li>
+       
+    </ol>
+</nav>
+<h3 class="mb-3" id="eventTitle"> </h3>
+
+<div class="form-group mb-3 mt-3">
+    Show Rows
+    <select id="rows">
+        
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="25">25</option>
+        <option value="50">50</option>
+    </select>
+</div>
+
+<a class="btn btn-primary" id="addLocation">Add Event plan to Location </a>
+<table class="table table-striped table-borderless pt-3 mt-3" id="locationTable">
+    <thead class="table-dark">
+        <tr>
+            <th>Location Id<i class="bi bi-caret-down-fill sorter" id="IdDesc" style="cursor:pointer"></i> <i class="bi bi-caret-up-fill sorter" id="IdAsc" style="cursor:pointer"></i></th>
+            <th>Location Name <i class="bi bi-caret-down-fill  sorter" id="NameDesc" style="cursor:pointer"></i> <i class="bi bi-caret-up-fill sorter" id="NameAsc" style="cursor:pointer"></i></th>
+            <th>Action</th>
+        </tr
+    </thead>
+    <tbody class="table-hover" id="location-table-body">
+        @foreach(var item in Model)
+        {
+        <tr class="location-table-row" data-locId="@item.LocationId" >
+            <td>@item.LocationId</td>
+            <td>@item.LocationName</td>
+            <td> <button class="btn btn-danger" data-id="@item.LocationId}" data-name="@item.LocationName"><i class="bi bi-trash-fill"></i></button></td>
+        </tr>
+        }
+    </tbody>
+</table>
+<div class="mt-3">
+    <nav class="Page navigation">
+        <ul class="pagination d-flex justify-content-center">
+        </ul>
+    </nav>
+</div>
+<!--Delete Modal-->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Are you sure. Do you want to delete?</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-secondary" data-bs-dismiss="modal">Cancel</a>
+                <a class="btn  btn-danger" id="confirmDelete">Delete</a>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+@section Scripts {
+    
+    <script>
+        var eventId = "@Html.Raw(ViewBag.EventId)";
+        $(document).ready(function () { 
+            var tableData = @Html.Raw(Json.Serialize(Model));
+              var state = {
+                'querySet': tableData,
+                'page': 1,
+                'rows': 5, 
+                'sortBy': "IdAsc"
+            };
+
+              //filtering data based on pagination 
+            function pagination(querySet, page, rows) {
+
+                var StartNum = (page - 1) * rows;
+                var EndNum = StartNum + rows;
+
+                var trimmedData = querySet.slice(StartNum, EndNum);
+                //number of pages based on rows displayed on that page
+                var pages = Math.ceil(querySet.length / rows);
+
+                return {
+                    'querySet': trimmedData,
+                    'pages': pages
+                };
+            }
+             function buildTable() {
+                //getting the table
+                var table = $('#location-table-body');
+
+                table.empty();
+                console.log("I'm in");
+                //sorting the data in the table
+                state.querySet = sortTable(state.querySet, state.sortBy);
+
+                //data that is going to be shown on the table based on applied pagination
+                var data = pagination(state.querySet, state.page, state.rows);
+
+                var myList = data.querySet;
+
+               
+
+                //iterating through the list to create rows in the table
+                for (var i = 0; i < myList.length; i++) {
+                    var row = ` <tr class="location-table-row" data-locId="${myList[i].locationId}" >
+                                <td  class="location-table-data" data-locId="${myList[i].locationId}"> ${myList[i].locationId} </td>
+                                <td  class="location-table-data" data-locId="${myList[i].locationId}"> ${myList[i].locationName} </td>
+                               <td> <button class="btn btn-danger deleteLocation" id="location-${myList[i].locationId}" data-id="${myList[i].locationId}" data-name="${myList[i].locationName}" ><i class="bi bi-trash-fill"></i></button></td>
+                          
+                            </tr>`;
+                    table.append(row);
+                }
+
+                pageButtons(data.pages);
+            }
+            function pageButtons(pages) {
+                //get the pagination container
+                var wrapper = $('.pagination');
+                wrapper.empty();
+                //2 pages before the current page
+                var maxLeft = (state.page - 2 < 1) ? 1 : state.page - 2;
+                //2 pages after the current page
+                var maxRight = (state.page + 2 > pages) ? pages : state.page + 2;
+
+                //showing all the pages and if it is current page applying active class
+                for (var page = maxLeft; page <= maxRight; page++) {
+                    wrapper.append(`<li class="page-item ${state.page === page ? 'active' : ''}">
+                                <button class="page-link">${page}</button>
+                            </li>`);
+                }
+
+                if (state.page !== 1) {
+                    wrapper.prepend(`<li class="page-item">
+                                <button class="page-link">First</button>
+                            </li>`);
+                }
+
+                if (state.page !== pages) {
+                    wrapper.append(`<li class="page-item">
+                                <button class="page-link">Last</button>
+                            </li>`);
+                }
+                //on clicking the pages button changing the current page
+                $('.page-item').on('click', function () {
+                    var page = $(this).text();
+                    page = page.trim();
+                    //console.log(page);
+                    if (page === "First") {
+                       
+                        state.page = 1;
+                    } else if (page =="Last") {
+                       
+                        state.page = pages;
+                    } else {
+                        state.page = Number(page);
+                    }
+
+                    buildTable();
+                    
+                });
+            }
+
+             //sorting the table
+            function sortTable(data, prop) {
+                switch (prop) {
+                    case "NameAsc":
+                       return data.sort((a, b) => {
+                            a = a.locationName.toLowerCase();
+                            b = b.locationName.toLowerCase();
+                            return a < b ? -1 : a > b ? 1 : 0; //negative means a comes first, positive means b comes first
+                        });
+                    case "NameDesc":
+                        return data.sort((a, b) => {
+                            a = a.locationName.toLowerCase();
+                            b = b.locationName.toLowerCase();
+                            return a > b ? -1 : a < b ? 1 : 0; //positive means b comes first, negative means a comes first
+                        });
+                    case "IdAsc":
+                         return data.sort((a, b) => {
+                            a = a.locationId.toLowerCase();
+                            b = b.locationId.toLowerCase();
+                            return a < b ? -1 : a > b ? 1 : 0; //negative means a comes first, positive means b comes first
+                        });
+                    case 'IdDesc':
+                        return data.sort((a, b) => {
+                            a = a.locationId.toLowerCase();
+                            b = b.locationId.toLowerCase();
+                            return a > b ? -1 : a < b ? 1 : 0; //positive means b comes first, negative means a comes first
+                        });
+                }
+            }
+
+             function showModal(location) {
+                console.log(location);
+
+                var deleteModal = $('#deleteModal');
+                console.log(deleteModal);
+
+                var modalBody = `<p>Event happening at Below location is to be deleted </p>
+                                    <p>Event location Name : ${location.Name} </p>
+                            `;
+                deleteModal.find('.modal-body').html(modalBody);
+                deleteModal.modal('show');
+
+                 $("#confirmDelete").on("click", function () {
+                     console.log("confirm clicked");
+                     console.log('@eventId');
+                     window.location.href = `https://localhost:44360/location/DeleteEventAllocation/${eventId}/${location.Id}`;
+                 });
+             }
+
+             $(document).on('click','.deleteLocation',function () {
+                var location = {
+                    Id: $(this).data('id'),
+                    Name: $(this).data('name')
+                };
+
+                console.log(location);
+                showModal(location);
+            });
+
+            //to change the look on clicking the sort arrow
+            function toggleSortArrow(sortByProp) {
+                $('.sorter').removeClass('text-secondary');
+                $('#'+sortByProp).addClass('text-secondary');
+            }
+
+            $('#rows').on('change', function () {
+                state.rows = Number($(this).val());
+                state.page = 1;
+                buildTable();
+            });
+            $('.sorter').on('click', function(){
+                
+                state.sortBy = $(this).attr('id'); 
+                //console.log(state.sortBy)
+                toggleSortArrow(state.sortBy);
+                buildTable();
+            })
+
+            buildTable();
+        });
+    </script>
+}
+
+

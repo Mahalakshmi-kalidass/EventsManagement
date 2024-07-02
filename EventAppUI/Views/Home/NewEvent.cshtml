@@ -1,0 +1,223 @@
+﻿@using EventsDAL.Models
+
+@{
+    ViewData["Title"] = "newEvent";
+    Layout = "~/Views/Home/Shared/HomeLayout.cshtml";
+}
+@model EventsDAL.Models.Event;
+
+<h1 class="text-center">New Event Form</h1>
+<div class="container-fluid w-50">
+    
+   
+        <form method="post"  id="eventForm">
+            <div class="form-group mb-3">
+                <label for="eventName">Event Name</label>
+                <input type="text" class="form-control" id="eventName" asp-for="EventName" placeholder="Enter event name">
+            </div>
+            <div class="form-group mb-3">
+                <label for="eventDescription">Description</label>
+                <textarea class="form-control" id="eventDescription" rows="3" asp-for="EventDescription" placeholder="Enter event description"></textarea>
+            </div>
+            <div class="form-group mb-3">
+                <label for="eventDate">Event Date</label>
+            <input type="datetime-local" class="form-control" asp-for="EventDate" id="eventDate">
+            </div>
+
+            <div class="form-group mb-3">
+                <label>Choose Location</label>
+                <select class="form-select" id="locations" multiple>
+
+                    
+                @foreach (var item in ViewBag.Locations as List<Location> )
+                {
+                    <option value="@item.LocationId">@item.LocationName</option>
+                }
+                </select>
+            </div>
+          
+            <div id="staffGroup">
+
+            </div>
+
+            <div class="form-group mt-3 row ps-3">
+
+
+            <a asp-route="Home" class="btn btn-secondary mt-3 col-2 me-3"> Cancel</a>
+            <input type="submit" class="btn btn-primary mt-3 col-2 ms-3" value="Submit" />
+                
+            </div>
+         
+        </form>
+    
+</div>
+
+@section Scripts {
+    <script>
+        var allStaffs = @Html.Raw(Json.Serialize(ViewBag.Staffs));
+
+        console.log(allStaffs);
+        $(document).ready(function () {
+            $('#locations').on('change', function () {
+                $('#staffGroup').empty();
+
+                // Iterating over each selected location
+                $('#locations :selected').each(function () {
+                    var locId = $(this).val();
+                    var location = $(this).text();
+                    var filtered = allStaffs.filter(function (staff) {
+                        return staff.locationId === locId;
+                    });
+                    var staffLabel = '';
+                    staffLabel += `<label>Select staff for ${$(this).text()} from available list</label>`;
+                    var staffDropdown = `<select class="form-select" id="staffForLocation-${locId}" multiple>`;
+                    filtered.forEach(function (staff) {
+                        staffDropdown += `<option value="${staff.staffId}">${staff.staffName}</option>`;
+                    });
+                    staffDropdown += `<select>`;
+
+                    $('#staffGroup').append(staffLabel);
+                    $('#staffGroup').append(staffDropdown);
+
+                    // For each staff dropdown adding a corresponding text input for topics
+                    //creates topic input box for lastly added dropdown
+                    $('#staffGroup select').last().on('change', function () {
+                        var topicsInputs = '';
+                        $(this).find(':selected').each(function () {
+                            topicsInputs += `<div>
+                                                    <label>Topics for ${$(this).text()}</label>
+                                                            <input type="text" class="form-control" id="topic-${$(this).text()}" placeholder="Enter topics">
+                                                    
+                                                    </div>`;
+                        });
+
+                        // Appending topics inputs after the staff dropdown
+                        $(this).nextAll('.topics-container').remove(); // Clear existing topics inputs
+                        $(this).after(`<div class="topics-container">${topicsInputs}</div>`);
+                    });
+
+                });
+
+
+            });
+            $('#eventForm').on('submit', function (e) {
+                e.preventDefault();
+
+                // storing selected location  into an array
+                var selectedLocations = $('#locations').val();
+
+                // Construct formData object
+                var formData = {
+                    eventName: $('#eventName').val(),
+                    eventDescription: $('#eventDescription').val(),
+                    eventDate: $('#eventDate').val(),
+                    selectedLocations: selectedLocations ,
+                    staffsAndTopic : collectStaffTopics()
+                };
+
+                console.log(formData);
+
+                //saving event using ajax
+                $.ajax({
+                    url: "https://localhost:44354/api/Event/AddEvent",
+                    method:'POST',
+                    contentType: 'application/json',
+                    data:JSON.stringify({
+                        eventId: "3fa85f64-5717-4562-b3fc-2c963f66afa6", 
+                        eventName: formData.eventName,
+                        eventDescription: formData.eventDescription,
+                        eventDate: formData.eventDate
+                    }),
+                    success: function (data) {
+                        // Use returned eventid to create event allocation and topics covered using AJAX
+                        var eventId = data.eventId;
+                        console.log(`event id ${eventId}`);
+                        // Iterate over selected locations/staffs to create event allocations
+                        formData.selectedLocations.forEach(function (locId) {
+                            formData.staffsAndTopic[locId].forEach(function (staffData) {
+                                createEventAllocation(eventId, locId, staffData.staffId);
+                                createTopicsCovered(eventId, locId, staffData.staffId, staffData.topic);
+                            });
+                        });
+                        window.location.href = "/";
+
+                        //  function to create event allocation
+                        function createEventAllocation(eventId, locId, staffId) {
+                            $.ajax({
+                                url: "https://localhost:44354/api/EventAllocation/addEventAllocation",
+                                method: 'POST',
+                                contentType: 'application/json',
+                                data: JSON.stringify({
+                                    eventAllocationId: "3fa85f64-5717-4562-b3fc-2c963f66afa6", //dummy value -not used - will  create new guid id on call
+                                    eventId: eventId,
+                                    locationId: locId,
+                                    staffId: staffId,
+                                    
+                                }),
+                                success: function (allocationData) {
+                                    // Handle success of event allocation creation
+                                    console.log("Event allocation created:", allocationData);
+                                },
+                                error: function (error) {
+                                    // Handle error in event allocation creation
+                                    console.error("Error creating event allocation:", error);
+                                }
+                            });
+                        }
+                        function createTopicsCovered(eventId, locId, staffId,topic) {
+                            $.ajax({
+                                url: "https://localhost:44354/api/Topic/addTopic",
+                                method: 'POST',
+                                contentType: 'application/json',
+                                data: JSON.stringify({
+                                    topicId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                                    eventId: eventId,
+                                    locationId: locId,
+                                    staffId: staffId,
+                                    topicName:topic
+                                }),
+                                success: function (allocationData) {
+                                    // Handle success of event allocation creation
+                                    console.log("topic created:", allocationData);
+                                },
+                                error: function (error) {
+                                    // Handle error in event allocation creation
+                                    console.error("Error creating topic:", error);
+                                }
+                            });
+                        }
+                    },
+                    error: function (error) {
+                        // Handle error in saving event
+                        console.error("Error saving event:", error);
+                    }
+                })
+             
+            });
+            function collectStaffTopics() {
+                var staffTopics = {};
+
+                
+                $('#locations :selected').each(function () {
+                    var locId = $(this).val();
+                    staffTopics[locId] = [];
+
+                    // Iterate over selected staff for the current location
+                    $('#staffForLocation-' + locId + ' :selected').each(function () {
+                        var staff = $(this).text();
+                        var staffId = $(this).val();
+                        var topic = $('#topic-' + staff).val();
+                        staffTopics[locId].push({ staffId: staffId, topic: topic });
+                    });
+                });
+
+                return staffTopics;
+            }
+
+
+        });
+    </script>
+
+
+
+}

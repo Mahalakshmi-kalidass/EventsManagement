@@ -1,0 +1,33 @@
+﻿
+@{
+    ViewData["Title"] = "EditEvent";
+    Layout = "~/Views/Home/Shared/HomeLayout.cshtml";
+}
+@model EventsDAL.Models.Event;
+<h3 class="text-center">Edit Event </h3>
+<div class="container-fluid w-50">
+    <form method="post" id="eventForm" asp-route="UpdateEvent">
+        <input type="text" asp-for="EventId" hidden />
+        <div class="form-group mb-3">
+            <label for="eventName">Event Name</label>
+            <input type="text" class="form-control" id="eventName" asp-for="EventName" placeholder="Enter event name">
+        </div>
+        <div class="form-group mb-3">
+            <label for="eventDescription">Description</label>
+            <textarea class="form-control" id="eventDescription" rows="3" asp-for="EventDescription" placeholder="Enter event description"></textarea>
+        </div>
+        <div class="form-group mb-3">
+            <label for="eventDate">Event Date</label>
+            <input type="datetime-local" class="form-control" asp-for="EventDate" id="eventDate">
+        </div>
+        <div class="form-group mt-3 row ps-3">
+
+
+            <a asp-route="Home" class="btn btn-secondary mt-3 col-2 me-3"> Cancel</a>
+            <input type="submit" class="btn btn-primary mt-3 col-2 ms-3" value="Submit" />
+
+        </div>
+    </form>
+
+</div>
+

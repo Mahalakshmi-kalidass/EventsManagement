@@ -1,0 +1,91 @@
+﻿@using EventsDAL.Models
+
+@{
+    ViewData["Title"] = "AddLocation";
+    Layout = "~/Views/Home/Shared/HomeLayout.cshtml";
+}
+@model EventsDAL.Models.EventAllocation;
+<h3 class="text-center mb-3">Add Event Plan to Location </h3>
+<div class="container-fluid w-50" >
+    <form method="post" asp-route="AddAllocation" id="allocationForm">
+        <input type="text" asp-for="EventId" value="@ViewBag.eventId" id="event" hidden />
+        <div class="form-group mb-3">
+            <label>Select the Location to Add</label>
+            <select class="form-select" id="location" asp-for="LocationId">
+                <option value="">Choose Location</option>
+                @foreach (var item in ViewBag.Locations as List<Location>)
+                {
+                    <option value="@item.LocationId">@item.LocationName</option>
+                }
+            </select>
+        </div>
+        <div class="form-group mb-3">
+            <label>Select the staff </label>
+            <select class="form-select" id="staffOption" asp-for="StaffId">
+                <option value="">Choose staff</option>
+               
+            </select>
+        </div>
+        <div class="form-group mb-3">
+            <label>Topic</label>
+            <input type="text" id="topic" class="form-control" />
+
+        </div>
+        <div class="form-group mt-3 row ps-3">
+
+
+            <a asp-route="Home" class="btn btn-secondary mt-3 col-2 me-3"> Cancel</a>
+            <input type="submit" class="btn btn-primary mt-3 col-2 ms-3" value="Submit" />
+
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        var staffs = @Html.Raw(Json.Serialize(ViewBag.Staffs));
+        console.log(staffs);
+        $(document).ready(function () {
+            $('#location').on('change', function () {
+                var locId = $(this).val();
+                var filtered = staffs.filter(function (staff) {
+                    return staff.locationId === locId;
+                });
+                var staffDropdown = ' <option value="">Choose staff</option>';
+
+                filtered.forEach(function (staff) {
+                    staffDropdown += `<option value="${staff.staffId}">${staff.staffName}</option>`;
+                });
+
+                // Clear previous options and append new ones
+                $('#staffOption').empty().append(staffDropdown);
+            });
+            $('#allocationForm').on('submit', function (e) {
+                e.preventDefault();
+                $.ajax({
+                    url: "https://localhost:44354/api/Topic/addTopic",
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        topicId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                        eventId: $('#event').val(),
+                        locationId: $('#location').val(),
+                        staffId: $('#staffOption').val(),
+                        topicName: $('#topic').val()
+                    }),
+                    success: function (allocationData) {
+                        // Handle success of topic allocation creation
+                        console.log("topic created:", allocationData);
+                    },
+                    error: function (error) {
+                        // Handle error in topic allocation creation
+                        console.error("Error creating topic:", error);
+                    }
+                });
+                $('#allocationForm').off('submit').submit(); 
+
+            })
+        });
+    </script>
+}
+

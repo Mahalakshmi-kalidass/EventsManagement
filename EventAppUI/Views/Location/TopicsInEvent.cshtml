@@ -1,0 +1,209 @@
+﻿
+@{
+    ViewData["Title"] = "TopicsInEvent";
+    Layout = "~/Views/Home/Shared/HomeLayout.cshtml";
+}
+@model List<EventsDAL.Models.TopicCovered>
+
+
+
+<nav aria-label="breadcrumb p-2">
+    <ol class="breadcrumb p-2">
+        <li class="breadcrumb-item "><a href="/">Home</a></li>
+        <li class="breadcrumb-item "><a id="eventLocationCrum">Event Locations</a>  </li>
+        <li class="breadcrumb-item "><a id="EventStaffsCrum"> Event Staffs </a></li>
+        <li class="breadcrumb-item active"><a id="EventTopicsCrum"> Event Topics </a></li>
+    </ol>
+</nav>
+
+<h3 id="eventTitle"></h3>
+<div class="form-group mb-3 mt-3">
+    Show Rows
+    <select id="rows">
+        
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="25">25</option>
+        <option value="50">50</option>
+    </select>
+</div>
+
+<table class="table table-striped table-borderless pt-3 mt-3" id="locationTable">
+    <thead class="table-dark">
+        <tr>
+            <th>Topic Id <i class="bi bi-caret-down-fill sorter" id="IdDesc" style="cursor:pointer"></i> <i class="bi bi-caret-up-fill sorter" id="IdAsc" style="cursor:pointer"></i></th>
+            <th>Topic Name<i class="bi bi-caret-down-fill sorter" id="NameDesc" style="cursor:pointer"></i> <i class="bi bi-caret-up-fill sorter" id="NameAsc" style="cursor:pointer"></i></th>
+            
+        </tr>
+    </thead>
+    <tbody class="table-hover" id="topic-table-body">
+        @foreach (var item in Model)
+        {
+            <tr class="topic-table-row" >
+                <td>@item.TopicId</td>
+                <td>@item.TopicName</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div class="mt-3">
+    <nav class="Page navigation">
+        <ul class="pagination d-flex justify-content-center">
+        </ul>
+    </nav>
+</div>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var tableData = @Html.Raw(Json.Serialize(Model));
+            var state = {
+                'querySet': tableData,
+                'page': 1,
+                'rows': 5,
+                'sortBy': "IdAsc"
+            };
+
+            //filtering data based on pagination
+            function pagination(querySet, page, rows) {
+
+                var StartNum = (page - 1) * rows;
+                var EndNum = StartNum + rows;
+
+                var trimmedData = querySet.slice(StartNum, EndNum);
+                //number of pages based on rows displayed on that page
+                var pages = Math.ceil(querySet.length / rows);
+
+                return {
+                    'querySet': trimmedData,
+                    'pages': pages
+                };
+            }
+            function buildTable() {
+                //getting the table
+                var table = $('#topic-table-body');
+
+                table.empty();
+                console.log("I'm in");
+                //sorting the data in the table
+                state.querySet = sortTable(state.querySet, state.sortBy);
+
+                //data that is going to be shown on the table based on applied pagination
+                var data = pagination(state.querySet, state.page, state.rows);
+
+                var myList = data.querySet;
+
+
+
+                //iterating through the list to create rows in the table
+                for (var i = 0; i < myList.length; i++) {
+                    var row = ` <tr class="topic-table-row" >
+                                                <td>${myList[i].topicId}</td>
+                                                <td>${myList[i].topicName}</td>
+
+
+                                            </tr>`;
+                    table.append(row);
+                }
+
+                pageButtons(data.pages);
+            }
+            function pageButtons(pages) {
+                //get the pagination container
+                var wrapper = $('.pagination');
+                wrapper.empty();
+                //2 pages before the current page
+                var maxLeft = (state.page - 2 < 1) ? 1 : state.page - 2;
+                //2 pages after the current page
+                var maxRight = (state.page + 2 > pages) ? pages : state.page + 2;
+
+                //showing all the pages and if it is current page applying active class
+                for (var page = maxLeft; page <= maxRight; page++) {
+                    wrapper.append(`<li class="page-item ${state.page === page ? 'active' : ''}">
+                                                <button class="page-link">${page}</button>
+                                            </li>`);
+                }
+
+                if (state.page !== 1) {
+                    wrapper.prepend(`<li class="page-item">
+                                                <button class="page-link">First</button>
+                                            </li>`);
+                }
+
+                if (state.page !== pages) {
+                    wrapper.append(`<li class="page-item">
+                                                <button class="page-link">Last</button>
+                                            </li>`);
+                }
+                //on clicking the pages button changing the current page
+                $('.page-item').on('click', function () {
+                    var page = $(this).text();
+                    page = page.trim();
+                    //console.log(page);
+                    if (page === "First") {
+
+                        state.page = 1;
+                    } else if (page == "Last") {
+
+                        state.page = pages;
+                    } else {
+                        state.page = Number(page);
+                    }
+
+                    buildTable();
+
+                });
+            }
+
+            //sorting the table
+            function sortTable(data, prop) {
+                switch (prop) {
+                    case "NameAsc":
+                        return data.sort((a, b) => {
+                            a = a.topicName.toLowerCase();
+                            b = b.topicName.toLowerCase();
+                            return a < b ? -1 : a > b ? 1 : 0; //negative means a comes first, positive means b comes first
+                        });
+                    case "NameDesc":
+                        return data.sort((a, b) => {
+                            a = a.topicName.toLowerCase();
+                            b = b.topicName.toLowerCase();
+                            return a > b ? -1 : a < b ? 1 : 0; //positive means b comes first, negative means a comes first
+                        });
+                    case "IdAsc":
+                        return data.sort((a, b) => {
+                            a = a.topicId.toLowerCase();
+                            b = b.topicId.toLowerCase();
+                            return a < b ? -1 : a > b ? 1 : 0; //negative means a comes first, positive means b comes first
+                        });
+                    case 'IdDesc':
+                        return data.sort((a, b) => {
+                            a = a.topicId.toLowerCase();
+                            b = b.topicId.toLowerCase();
+                            return a > b ? -1 : a < b ? 1 : 0; //positive means b comes first, negative means a comes first
+                        });
+                }
+            }
+
+            //to change the look on clicking the sort arrow
+            function toggleSortArrow(sortByProp) {
+                $('.sorter').removeClass('text-secondary');
+                $('#' + sortByProp).addClass('text-secondary');
+            }
+
+            $('#rows').on('change', function () {
+                state.rows = Number($(this).val());
+                state.page = 1;
+                buildTable();
+            });
+            $('.sorter').on('click', function () {
+
+                state.sortBy = $(this).attr('id');
+                //console.log(state.sortBy)
+                toggleSortArrow(state.sortBy);
+                buildTable();
+            })
+
+            buildTable();
+        });
+    </script>
+}
