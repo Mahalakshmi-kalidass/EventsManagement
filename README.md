@@ -2,11 +2,17 @@
 This is a basic website for managing events.
 
 **Features**
+
 **Create new events**: Users can add new events with a title, description, date and time.
+
 **View existing events**: A list of existing events is displayed with their details.
+
 **Edit events**: Users can modify the details of existing events.
+
 **Delete events**: Users can remove events.
+
 **Error logging**: Errors are logged in a table in the database for debugging and troubleshooting purposes.
+
 **Technologies**
   ASP.Net Core MVC
   ASP.NET Core Web API
