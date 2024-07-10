@@ -1,6 +1,9 @@
 # Events
 This is a basic website for managing events.
 
+![Screenshot 2024-07-10 101153](https://github.com/Mahalakshmi-kalidass/EventsManagement/assets/89296562/0c726f34-e6d6-4e9f-b885-7890d2765dd0)
+
+
 **Features**
 
 **Create new events**: Users can add new events with a title, description, date and time.
@@ -28,6 +31,7 @@ This is a basic website for managing events.
   Jquery
   
   Entity Framework Core (for database interactions)
+
   
 **Project Structure**
 
