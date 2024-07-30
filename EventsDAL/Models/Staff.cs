@@ -19,6 +19,8 @@ namespace EventsDAL.Models
         [Column("StaffName")]
         public string StaffName { get; set; }
 
+     
+
         [Column("Email")]
         public string Email { get; set; }
 

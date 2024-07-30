@@ -1,0 +1,212 @@
+﻿@using EventsDAL.Models
+@using Newtonsoft.Json
+
+@{
+    ViewData["Title"] = "AccessManagement";
+   
+}
+
+<h2 class="m-3">Access Management</h2>
+@{
+    List<EventAccess> allAccess = new List<EventAccess>();
+    List<EventAccess> userAccess = new List<EventAccess>();
+}
+<table class="table w-75 m-3">
+    <thead>
+        <tr>
+            <th>Users</th>
+            <th>Role</th>
+            <th>Has Access To</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (ViewData["Users"] != null)
+        {
+
+            foreach (var item in ViewData["Users"] as List<User>)
+            {
+                
+                if (ViewData["AccessInfo"] != null)
+                {
+                    allAccess = ViewData["AccessInfo"] as List<EventAccess>;
+                    userAccess = allAccess.Where(ac => ac.UserId.Equals(item.Id)).ToList();
+                }
+              
+                    <tr>
+                        <td>@item.UserName</td>
+                        <td>@item.UserRole</td>
+                        <td>
+                            @if (ViewData["Events"] != null)
+                            {
+                                var events = ViewData["Events"] as List<Event>;
+                                if (userAccess.Count > 0 && events != null)
+                                {
+                                    foreach (var ua in userAccess)
+                                    {
+                                        var eventname = events.Where(e => e.EventId.Equals(ua.EventId)).FirstOrDefault();
+                                        if (eventname != null)
+                                        {
+                                            <p>@eventname.EventName</p>
+                                        }
+                                        else
+                                        {
+                                            <p>No Events</p>
+                                        }
+                                    }
+
+                                }
+                                else if (item.UserRole == Role.Owner || item.UserRole == Role.Viewer)
+                                {
+                                    <p>All Events</p>
+                                }
+                                else
+                                {
+                                    <p>No Events</p>
+                                }
+                            }
+                        </td>
+                        <td>
+                            @if (item.UserRole == Role.EventManager || item.UserRole == Role.EventViewer)
+                            {
+                                <button class="btn btn-primary GrantAccessModal" data-id="@item.Id"> Grant Access </button>
+                            }
+                            @if (userAccess.Count > 0)
+                            {
+                                <button class="btn btn-danger RevokeAccessModal" data-id="@item.Id"> Revoke Access </button>
+
+                            }
+                    </td>
+                    </tr>
+                
+               
+            }
+        }
+        
+
+    </tbody>
+</table>
+<div class="modal fade" id="AccessModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3> Grant access to the Event</h3>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+
+                <label class="form-label">Select Events to Grant Access</label>
+                <div class="dropdown">
+                    <button class="btn btn-transparent dropdown-toggle" type="button" id="multiSelectDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        Select
+                    </button>
+                    <ul class="dropdown-menu" id="eventsDropdownContainer" aria-labelledby="multiSelectDropdown">
+                        @if (ViewData["Events"] != null)
+                        {
+                            var events = ViewData["Events"] as List<Event>;
+                            var ungrantedEvents = events;
+                            if(userAccess.Count > 0)
+                            {
+                                foreach (var access in userAccess)
+                                {
+                                    ungrantedEvents.RemoveAll(ue => ue.EventId.Equals(access.EventId));
+                                }
+                            }
+                           
+                           
+                            foreach (var item in ungrantedEvents)
+                            {
+                                <li class="dropdown-item">
+                                    <label>
+                                        <input type="checkbox" value="@item.EventId">
+                                        @item.EventName
+                                    </label>
+                                </li>
+                            }
+                           
+                        }
+                       
+                        
+                    </ul>
+                </div>
+
+            </div>
+        
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-success" id="grantAccessConfirm">Grant</button>
+             </div>
+        </div>
+    </div>
+
+
+</div>
+<!--Revoke modal-->
+<div class="modal fade" id="RevokeModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3> Revoke access to the Event</h3>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+
+                <label class="form-label">Select Events to revoke Access</label>
+                <div class="dropdown">
+                    <button class="btn btn-transparent dropdown-toggle" type="button" id="multiSelectRevokeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        Select
+                    </button>
+                    <ul class="dropdown-menu" id="revokeeventsDropdownContainer" aria-labelledby="multiSelectDropdown">
+                        @if (ViewData["Events"] != null)
+                        {
+                            var events = ViewData["Events"] as List<Event>;
+                            var grantedEvents = new List<Event>();
+                            if (userAccess.Count > 0 && events.Count>0)
+                            {
+                                foreach (var access in userAccess)
+                                {
+                                    grantedEvents.Add(events.Where(e => e.EventId.Equals(access.EventId)).FirstOrDefault());
+                                }
+                            }
+
+
+                            foreach (var item in grantedEvents)
+                            {
+                                <li class="dropdown-item">
+                                    <label>
+                                        <input type="checkbox" value="@item.EventId">
+                                        @item.EventName
+                                    </label>
+                                </li>
+                            }
+
+                        }
+
+
+                    </ul>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-success" id="revokeAccessConfirm">Revoke</button>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+@section Scripts{
+    <script>
+        var allEvents = @Html.Raw(JsonConvert.SerializeObject(ViewData["Events"] as List<Event>))
+        var accesses = @Html.Raw(JsonConvert.SerializeObject(allAccess))
+            console.log(accesses);
+       
+        
+       
+    </script>
+   
+}
+

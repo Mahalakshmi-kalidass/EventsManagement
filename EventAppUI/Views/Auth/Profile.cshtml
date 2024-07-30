@@ -1,0 +1,12 @@
+﻿@using System.Security.Claims
+
+@{
+    ViewData["Title"] = "Profile";
+    Layout = "~/Views/Home/Shared/HomeLayout.cshtml";
+}
+
+<h4 class="m-3"> <span class="text-primary"><a asp-route="Home"><i class="bi bi-arrow-left fw-bold "></i></a> </span>My Profile</h4>
+
+
+@* <partial name="~Views/Shared/Profile.cshtml"></partial> *@
+@Html.Partial("~/Views/Shared/Profile.cshtml")

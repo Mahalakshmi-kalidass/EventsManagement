@@ -1,4 +1,5 @@
 using EventsDAL.DataRepository;
+using EventsDAL.LogProvider;
 using EventsDAL.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
@@ -11,15 +12,11 @@ builder.Services.AddScoped<ICRUDDataRepo<Location>, LocationDataRepo>();
 builder.Services.AddScoped<IEventAllocationDataRepo<EventAllocation>, EventAllocationDataRepo>();
 builder.Services.AddScoped<IStaffDataRepo<Staff>, StaffDataRepo>();
 builder.Services.AddScoped<ITopicsCoveredRepo<TopicCovered>, TopicDataRepo>();
-
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IAccessService<EventAccess>, AccessService>();
 //logging
-var logger = new LoggerConfiguration()
-    .ReadFrom.Configuration(builder.Configuration)
-    .Enrich.FromLogContext()
-    .CreateLogger();
-builder.Logging.ClearProviders();
-builder.Logging.AddSerilog(logger);
 
+builder.Services.AddSingleton<ILoggerProvider, DatabaseLoggerProvider>();
 
 
 builder.Services.AddControllers().AddJsonOptions(options =>

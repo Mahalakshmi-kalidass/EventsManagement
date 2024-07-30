@@ -1,4 +1,5 @@
 ﻿using EventsDAL.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -7,6 +8,7 @@ using System.Text;
 
 namespace EventAppUI.Controllers
 {
+    [Authorize]
     [Route("Location")]
     public class LocationController : Controller
     {
@@ -46,6 +48,7 @@ namespace EventAppUI.Controllers
             return View(topics);
         }
 
+        [Authorize(Roles = "Owner,EventManager")]
         [Route("AddLocation/{eventId}", Name = "AddLocation")]
         public async Task<IActionResult> AddLocation(Guid eventId)
         {
@@ -55,7 +58,9 @@ namespace EventAppUI.Controllers
             await getAllStaffs();
             return View();
         }
+
         [HttpPost]
+        [Authorize(Roles = "Owner,EventManager")]
         [Route("AddAllocation", Name = "AddAllocation")]
         public async Task<IActionResult> AddAllocation(EventAllocation eventAllocation)
         {
@@ -80,6 +85,7 @@ namespace EventAppUI.Controllers
             return RedirectToAction("AddLocation", new {eventId = eventAllocation.EventId});
         }
 
+        [Authorize(Roles = "Owner,EventManager")]
         [Route("DeleteEventAllocation/{id}/{locId}", Name = "DeleteEventAllocation")]
         public async Task<IActionResult> DeleteEventAllocation(Guid id, Guid locId)
         {

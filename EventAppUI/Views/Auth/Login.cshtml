@@ -1,0 +1,47 @@
+﻿
+@{
+    ViewData["Title"] = "Login";
+}
+
+@model EventAppUI.ViewModels.Login
+
+<h1 class="text-center">Login</h1>
+
+<div class="container-fluid row mt-3 w-75 mx-auto p-3">
+    <div class="col-lg-6 mx-auto p-3 rounded border">
+        @if (TempData["UserLoginFailed"] != null)
+        {
+            <p class="alert alert-danger">@TempData["UserLoginFailed"]</p>
+        }
+        <form method="post" asp-route="LoginPost">
+            <div class="m-3 w-75 mx-auto">
+               <label class="form-label">Email</label>
+               <input type="text" class="form-control" asp-for="Email"/>
+               <span asp-validation-for="Email"></span>
+            </div>
+            <div class="m-3 w-75 mx-auto">
+                <label class="form-label">Password</label>
+                <input type="text" class="form-control" asp-for="Password" />
+                <span asp-validation-for="Password"></span>
+
+            </div>
+            <div class="m-3 w-75 mx-auto checkbox">
+                <label class="form-label">
+                    <input type="checkbox" class="form-check-input" />
+                    Remember Me
+                </label>
+               
+            </div>
+            <div class="row w-75 mx-auto m-3">
+               <div class="col d-grid">
+                    <input type="submit" value="Login" class="btn btn-success d-grid" />
+               </div> 
+               <div class="col d-grid">
+                    <a class="btn btn-secondary d-grid" asp-route="Index">Cancel</a>
+               </div>
+               
+            </div>
+
+        </form>
+    </div>
+</div>

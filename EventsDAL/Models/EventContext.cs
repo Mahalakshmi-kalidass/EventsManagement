@@ -14,6 +14,11 @@ namespace EventsDAL.Models
         public DbSet<Staff> Staffs { get; set; }
         public DbSet<EventAllocation> EventAllocations  { get; set; }
         public DbSet<TopicCovered> TopicsCovered { get; set; }
+        public DbSet<EventAccess> EventAccesses { get; set; }
+
+        public DbSet<User> Users { get; set; }
+        //Exception logging
+        public DbSet<ErrorLog> ErrorLogs { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -31,7 +36,8 @@ namespace EventsDAL.Models
             modelBuilder.Entity<EventAllocation>().HasOne<Staff>().WithMany().HasForeignKey(ea => ea.StaffId).OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Staff>().HasOne<Location>().WithMany().HasForeignKey(s => s.LocationId);
-            
+           
+
             modelBuilder.Entity<TopicCovered>().HasOne<Location>().WithMany().HasForeignKey(tc => tc.LocationId);
             modelBuilder.Entity<TopicCovered>().HasOne<Staff>().WithMany().HasForeignKey(tc => tc.StaffId);
             modelBuilder.Entity<TopicCovered>().HasOne<Event>().WithMany().HasForeignKey(tc => tc.EventId);
@@ -41,6 +47,9 @@ namespace EventsDAL.Models
                 new Event { EventId = Guid.NewGuid(), EventName = "Microsoft Build", EventDate = DateTime.Now, EventDescription = "This is an annual event held by microsoft" }
 
                 ) ;
+            modelBuilder.Entity<EventAccess>().HasOne<User>().WithMany().HasForeignKey(ea => ea.UserId);
+            modelBuilder.Entity<EventAccess>().HasOne<Event>().WithMany().HasForeignKey(ea => ea.EventId);
+
             modelBuilder.Entity<Location>().HasData(
 
                 new Location { LocationId = Guid.NewGuid(), LocationName = "Chennai" },
@@ -49,6 +58,8 @@ namespace EventsDAL.Models
                 new Location { LocationId = Guid.NewGuid(), LocationName = "LosAngels" }
 
                 );
+
+            modelBuilder.Entity<User>().Property(u => u.UserRole).HasConversion<int?>().HasDefaultValue(null);
 
             base.OnModelCreating(modelBuilder);
         }

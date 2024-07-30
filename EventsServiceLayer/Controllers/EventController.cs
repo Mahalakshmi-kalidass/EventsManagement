@@ -35,7 +35,8 @@ namespace EventsServiceLayer.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(exception: ex, $"StatusCode: {StatusCodes.Status500InternalServerError}, Message:Internal server error ");
+
                 return NotFound();
 
             }
@@ -62,7 +63,8 @@ namespace EventsServiceLayer.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(exception: ex, $"StatusCode: {StatusCodes.Status500InternalServerError}, Message:Internal server error ");
+
                 return NotFound();
             }
         }
@@ -87,7 +89,8 @@ namespace EventsServiceLayer.Controllers
             }
             catch(Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(exception: ex, $"StatusCode: {StatusCodes.Status500InternalServerError}, Message:Internal server error ");
+
                 return NotFound();
             }
             
@@ -116,7 +119,8 @@ namespace EventsServiceLayer.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(exception: ex, $"StatusCode: {StatusCodes.Status500InternalServerError}, Message:Internal server error ");
+
                 return NotFound();
             }
         }
@@ -141,9 +145,10 @@ namespace EventsServiceLayer.Controllers
                     return NotFound();
                 }
             }
-            catch(Exception e)
+            catch(Exception ex)
             {
-                _logger.LogError(e.Message);
+                _logger.LogError(exception: ex, $"StatusCode: {StatusCodes.Status500InternalServerError}, Message:Internal server error ");
+
                 return NotFound();
             }
 

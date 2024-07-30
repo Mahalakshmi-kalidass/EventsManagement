@@ -22,6 +22,31 @@ namespace EventsDAL.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("EventsDAL.Models.ErrorLog", b =>
+                {
+                    b.Property<Guid>("logId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Errormessage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StackTrace")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StatusCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("logId");
+
+                    b.ToTable("ErrorLogs");
+                });
+
             modelBuilder.Entity("EventsDAL.Models.Event", b =>
                 {
                     b.Property<Guid>("EventId")
@@ -49,18 +74,39 @@ namespace EventsDAL.Migrations
                     b.HasData(
                         new
                         {
-                            EventId = new Guid("c1161c51-9731-4b24-8188-e9e45e8a7ea2"),
-                            EventDate = new DateTime(2024, 6, 27, 14, 43, 29, 960, DateTimeKind.Local).AddTicks(6410),
+                            EventId = new Guid("f3883d6d-510c-4ce6-81de-48e24352096d"),
+                            EventDate = new DateTime(2024, 7, 26, 15, 13, 28, 730, DateTimeKind.Local).AddTicks(7835),
                             EventDescription = "This is an annual event held by microsoft",
                             EventName = "Ignite"
                         },
                         new
                         {
-                            EventId = new Guid("89b19ae5-39ad-49bd-8753-37d6f1110558"),
-                            EventDate = new DateTime(2024, 6, 27, 14, 43, 29, 960, DateTimeKind.Local).AddTicks(6425),
+                            EventId = new Guid("0d8f6a75-f3dd-42f0-ae0a-f91746b5b5db"),
+                            EventDate = new DateTime(2024, 7, 26, 15, 13, 28, 730, DateTimeKind.Local).AddTicks(7854),
                             EventDescription = "This is an annual event held by microsoft",
                             EventName = "Microsoft Build"
                         });
+                });
+
+            modelBuilder.Entity("EventsDAL.Models.EventAccess", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("EventAccesses");
                 });
 
             modelBuilder.Entity("EventsDAL.Models.EventAllocation", b =>
@@ -110,22 +156,22 @@ namespace EventsDAL.Migrations
                     b.HasData(
                         new
                         {
-                            LocationId = new Guid("ff252c41-8faf-4dac-b6db-9f2d99d314ad"),
+                            LocationId = new Guid("2b8fde25-82da-44c3-9a21-9eb25ba91519"),
                             LocationName = "Chennai"
                         },
                         new
                         {
-                            LocationId = new Guid("5957c463-248c-456f-89b7-e65bdfe13b96"),
+                            LocationId = new Guid("f3e7f117-0dc3-454e-ba19-a3cbfc4a1160"),
                             LocationName = "Mumbai"
                         },
                         new
                         {
-                            LocationId = new Guid("43b7455c-0092-4091-931c-8f5fd7135bf3"),
+                            LocationId = new Guid("48a26bee-3d95-4521-b7a0-d7f7e51eeeb7"),
                             LocationName = "Seatle"
                         },
                         new
                         {
-                            LocationId = new Guid("82ced29a-ec93-4001-92dc-0d11b286f327"),
+                            LocationId = new Guid("1ef18a59-7661-4955-a8fc-00cc10fcfcb2"),
                             LocationName = "LosAngels"
                         });
                 });
@@ -189,6 +235,50 @@ namespace EventsDAL.Migrations
                     b.HasIndex("StaffId");
 
                     b.ToTable("TopicsCovered");
+                });
+
+            modelBuilder.Entity("EventsDAL.Models.User", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("UserRole")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("EventsDAL.Models.EventAccess", b =>
+                {
+                    b.HasOne("EventsDAL.Models.Event", null)
+                        .WithMany()
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EventsDAL.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("EventsDAL.Models.EventAllocation", b =>

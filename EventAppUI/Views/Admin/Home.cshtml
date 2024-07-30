@@ -1,0 +1,139 @@
+﻿@using EventsDAL.Models
+
+@{
+    ViewData["Title"] = "AdminHome";
+
+}
+@{
+    var users = new List<User>();
+    if (ViewData["Users"] != null)
+    {
+        users = ViewData["Users"] as List<User>;
+    }
+    var events = new List<Event>();
+    if (ViewData["Events"] != null)
+    {
+        events = ViewData["Events"] as List<Event>;
+    }
+}
+<h1 class="m-2 p-2">Home</h1>
+@* <div class="container-fluid d-flex justify-content-between">
+    <div class="card admin-dashcard">
+        <h3 class="text-center text-white ">Users</h3>
+        <div class="rounded-circle bg-white card-incircle mx-auto">
+            <div class="fs-4 fw-bold text-center">@users.Count  </div>
+        </div>
+
+    </div>
+
+    <div class="card  admin-dashcard">
+        <h3 class="text-center text-white ">Owners</h3>
+        <div class="rounded-circle bg-white card-incircle mx-auto">
+            <div class="fs-4 fw-bold text-center">@users.Where(u=> u.UserRole.Equals(Role.Owner)).ToList().Count  </div>
+        </div>
+
+    </div>
+    <div class="card  admin-dashcard">
+        <h3 class="text-center text-white ">Event Managers</h3>
+        <div class="rounded-circle bg-white card-incircle mx-auto">
+            <div class="fs-4 fw-bold text-center">@users.Where(u => u.UserRole.Equals(Role.EventManager)).ToList().Count  </div>
+        </div>
+
+    </div>
+    <div class="card  admin-dashcard">
+        <h3 class="text-center text-white ">Event Viewers</h3>
+        <div class="rounded-circle bg-white card-incircle mx-auto">
+            <div class="fs-4 fw-bold text-center">@users.Where(u => u.UserRole.Equals(Role.EventViewer)).ToList().Count  </div>
+        </div>
+
+    </div>
+    <div class="card  admin-dashcard">
+        <h3 class="text-center text-white ">Viewers</h3>
+        <div class="rounded-circle bg-white card-incircle mx-auto">
+            <div class="fs-4 fw-bold text-center">@users.Where(u => u.UserRole.Equals(Role.Viewer)).ToList().Count  </div>
+        </div>
+
+    </div>
+</div> *@
+
+    <div class="row m-5">
+        <div class="col-lg-3 col-md-6 card-container">
+            <div class="card ">
+                <div class="card-body row ">
+                    <div class="bg-warning rounded-3 card-icon p-3 text-white  me-3 col-4 vertical-center text-center">
+                        <i class="bi bi-person-fill fs-3"></i>
+                    </div>
+                    <div class="col-4">
+
+                    </div>
+                    <div class="col-4">
+                    </div>
+                    <div class="d-flex flex-column  col-4">
+                        <div class="fs-5 text-secondary">Users</div>
+                        <div class="fs-4 fw-bold">@users.Count</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <div class="col-lg-3 col-md-6 card-container">
+        <div class="card ">
+            <div class="card-body row ">
+                <div class="bg-pink rounded-3 card-icon p-3 text-white  me-3 col-4 vertical-center text-center">
+                    <i class="bi bi-calendar2-event-fill fs-3"></i>
+                </div>
+                <div class="col-4">
+                </div>
+                <div class="col-4">
+                </div>
+                <div class="d-flex flex-column  col-4">
+                    <div class="fs-5 text-secondary">Events</div>
+                    <div class="fs-4 fw-bold">@events.Count</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6 card-container">
+        <div class="card ">
+            <div class="card-body row ">
+                <div class="bg-green rounded-3 card-icon p-3 text-white  me-3 col-4 vertical-center text-center">
+                    <i class="bi bi-eye-fill fs-3"></i>
+                </div>
+                <div class="col-4">
+                </div>
+                <div class="col-4">
+                </div>
+                <div class="d-flex flex-column  col-4">
+                    <div class="fs-5 text-secondary">Viewers</div>
+                    <div class="fs-4 fw-bold">@users.Where(u => u.UserRole.Equals(Role.Viewer)).ToList().Count </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6 card-container">
+        <div class="card ">
+            <div class="card-body row ">
+                <div class="bg-blue rounded-3 card-icon p-3 text-white  me-3 col-4 vertical-center text-center">
+                    <i class="bi bi-person-fill-gear fs-3"></i>
+                </div>
+                <div class="col-4">
+                </div>
+                <div class="col-3">
+                </div>
+                <div class="d-flex flex-column  col-5">
+                    <div class="fs-5 text-secondary"> Managers</div>
+                    <div class="fs-4 fw-bold">@users.Where(u => u.UserRole.Equals(Role.EventManager)).ToList().Count </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+<h3 class="mt-5 ms-2 p-2">Event Locations</h3>
+<div id="map" class="w-75 m-5" style=" height:580px">
+</div>
+
+
+        
+

@@ -1,0 +1,65 @@
+﻿@using EventsDAL.Models
+
+@{
+    ViewData["Title"] = "Register";
+ }
+
+@model EventAppUI.ViewModels.Register
+
+<h1 class="text-center">Register</h1>
+
+<div class="container-fluid row mt-3 w-75 mx-auto p-3">
+    <div class="col-lg-6 mx-auto p-3 rounded border">
+        @if (TempData["Success"] != null)
+        {
+            <p class="alert alert-success">@TempData["Success"]  <a asp-route="Login">Click here to login</a></p>
+        }
+        @if (TempData["Fail"] != null)
+        {
+            <p class="alert alert-danger">@TempData["Fail"]</p>
+        }
+        <form method="post" asp-route="RegisterUser">
+            <div class="m-3 w-75 mx-auto">
+                <label class="form-label">First Name</label>
+                <input type="text" class="form-control" asp-for="FirstName" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+
+            </div>
+            <div class="m-3 w-75 mx-auto">
+                <label class="form-label">Last Name</label>
+                <input type="text" class="form-control" asp-for="LastName" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+
+            </div>
+            <div class="m-3 w-75 mx-auto">
+                <label class="form-label">Email</label>
+                <input type="text" class="form-control" asp-for="Email"/>
+                <span asp-validation-for="Email" class="text-danger"></span>
+
+            </div>
+            <div class="m-3 w-75 mx-auto">
+                <label class="form-label">Password</label>
+                <input type="text" class="form-control" asp-for="Password" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+
+            </div>
+            <div class="m-3 w-75 mx-auto">
+                <label class="form-label">Confirm Password</label>
+                <input type="text" class="form-control" asp-for="ConfirmPassWord" />
+                <span asp-validation-for="ConfirmPassWord" class="text-danger"></span>
+
+            </div>
+           
+            <div class="row w-75 mx-auto m-3">
+                <div class="col d-grid">
+                    <input type="submit" value="Register" class="btn btn-success d-grid" />
+                </div>
+                <div class="col d-grid">
+                    <a class="btn btn-secondary d-grid" asp-route="Index">Cancel</a>
+                </div>
+
+            </div>
+
+        </form>
+    </div>
+</div>

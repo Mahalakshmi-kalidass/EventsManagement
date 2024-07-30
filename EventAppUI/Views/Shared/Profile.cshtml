@@ -1,0 +1,42 @@
+﻿@using System.Security.Claims
+
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+<div class="container-fluid w-75 mx-auto border rounded row">
+    <div class="col-md-3 d-flex flex-column p-2">
+        <div class="p-2 text-center mx-auto m-2 fs-2 rounded-circle bg-secondary text-white fw-bold" style="width:150px; height:150px; line-height:140px;">@User.FindFirst(ClaimTypes.Name).Value.ElementAt(0)</div>
+        <div class=" text-center">@User.FindFirst(ClaimTypes.Name).Value</div>
+        <div class=" rounded-circle text-center">@User.FindFirst(ClaimTypes.Email).Value</div>
+    </div>
+    <div class="col-md-9 p-2 mt-3 d-flex flex-column">
+        <table class="table table-striped">
+            <tbody>
+                <tr>
+                    <td>Name</td>
+                    <td>@User.FindFirst(ClaimTypes.Name).Value</td>
+                </tr>
+                <tr>
+                    <td>Role</td>
+
+                    <td>
+                        @if (User.FindFirst(ClaimTypes.Role).Value == "")
+                        {
+                            <p class="m-0">Yet To Be Assigned</p>
+                        }
+                        else
+                        {
+                            <p>@User.FindFirst(ClaimTypes.Role).Value</p>
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td>Email</td>
+                    <td>@User.FindFirst(ClaimTypes.Email).Value</td>
+                </tr>
+
+            </tbody>
+        </table>
+        <a class="btn btn-primary w-25" asp-route="Logout">Log out</a>
+    </div>
+</div>

@@ -1,0 +1,102 @@
+﻿@using EventsDAL.Models
+
+@{
+    ViewData["Title"] = "RoleManagement";
+
+}
+
+<h2 class="m-3">RoleManagement</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>User name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (ViewData["Users"] != null)
+        {
+            foreach (var item in ViewData["Users"] as List<User>)
+            {
+                <tr>
+                    <td>@item.UserName</td>
+                    <td>@item.Email</td>
+                    <td>@if (item.UserRole != null) { @item.UserRole }</td>
+
+                    <td>@if (item.UserRole == null)
+                        {
+                            <a class="btn btn-primary assignRole" data-id="@item.Id" data-action="assign" data-bs-toggle="modal" data-bs-target="#assignModal">Assign Role</a>
+                        }
+                        else
+                        {
+                            <a class="btn btn-primary ManageRole" data-id="@item.Id" data-action="modify" data-role="@item.UserRole">Modify Role</a>
+                        }
+                    </td>
+
+                </tr>
+            }
+        }
+        
+        
+    </tbody>
+</table>
+
+ <!--Assign Modal-->
+ <div class="modal fade" id="assignModal" aria-hidden="true">
+     <div class="modal-dialog">
+         <div class="modal-content">
+             <div class="modal-header">
+                <h3>Assign Role to the user</h3>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Select the role</label>
+                    <select class="form-select" id="assignRoleSelect" asp-items='Html.GetEnumSelectList<Role>().Where( o => !o.Text.Equals("Admin"))'>
+                        <option value="">Choose one</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <a class="btn btn-primary" id="assignConfirm" >Assign</a>
+            </div>
+         </div>
+     </div>
+
+ </div>
+
+<!--Modify Modal-->
+<div class="modal fade" id="ModifyModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Change Role to the user</h3>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p id="currentRole"> <span class="fw-bold">Current Role</span> : </p>
+                <div class="form-group">
+                    <label class="form-label">select the role to Change</label>
+                    <select id="changeRoleSelect" class="form-select">
+                        <option value="">Choose one</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <a class="btn btn-primary" id="modifyConfirm">Change</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts{
+    <script>
+        var roleOption = @Html.Raw(Json.Serialize(Html.GetEnumSelectList<Role>().Where(o => !o.Text.Equals("Admin"))));
+        
+    </script>
+}

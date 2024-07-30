@@ -1,27 +1,33 @@
 ﻿using EventsDAL.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualBasic;
 using Newtonsoft.Json;
+using System.Security.Claims;
 using System.Text;
 
 namespace EventAppUI.Controllers
 {
+    [Authorize]
     [Route("Home",Name ="Home")]
     public class HomeController : Controller
     {
         private readonly IConfiguration _config;
         private readonly string baseurl;
+     
         public HomeController(IConfiguration _config) 
         { 
             this._config = _config;
             baseurl = _config["WebApiBaseUrl"];
+           
+
         }
 
        
 
         [HttpGet]
-        [Route("/")]
+      //  [Route("/")]
         [Route("Home",Name = "Home")]
         public async Task<IActionResult> Home()
         {
@@ -38,9 +44,11 @@ namespace EventAppUI.Controllers
                     }
                 }
             }
-
+            ViewBag.Username = HttpContext.User.FindFirstValue(ClaimTypes.Name);
+            ViewData["UserInfo"] = HttpContext.User;
             return View(allEvents);
         }
+        [Authorize(Roles = "Owner")]
         [HttpGet]
         [Route("NewEvent",Name ="NewEvent")]
         public async Task<IActionResult> NewEvent()
@@ -52,6 +60,7 @@ namespace EventAppUI.Controllers
 
         [HttpGet]
         [Route("EditEvent/{Id}",Name = "EditEvent")]
+        [Authorize(Roles = "Owner,EventManager")]
         public async Task<IActionResult> EditEvent(Guid Id)
         {
             Event data = await LoadEvent(Id);
@@ -59,6 +68,7 @@ namespace EventAppUI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Owner,EventManager")]
         [Route("UpdateEvent",Name ="UpdateEvent")]
         public async Task<IActionResult> UpdateEvent(Event newEvent)
         {
@@ -79,9 +89,9 @@ namespace EventAppUI.Controllers
             }
             return View("EditEvent",new {Id = newEvent.EventId});
         }
-
+        [Authorize(Roles="Owner,EventManager")]
         [Route("DeleteEvent/{Id}",Name ="DeleteEvent")]
-        public async Task<IActionResult> DeleteEmployee(Guid Id)
+        public async Task<IActionResult> DeleteEvent(Guid Id)
         {
             using (var httpclient = new HttpClient())
             {
@@ -95,6 +105,27 @@ namespace EventAppUI.Controllers
                 }
             }
             return RedirectToAction("Home");
+        }
+
+       
+
+        [NonAction]
+        public async Task LoadAllEvents()
+        {
+            using (var httpclient = new HttpClient())
+            {
+                using (var response = await httpclient.GetAsync($"{baseurl}/event/GetAllEvent"))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var apiresponse = await response.Content.ReadAsStringAsync();
+                       var eventdetails = JsonConvert.DeserializeObject<List<Event>>(apiresponse);
+
+                        ViewData["Events"] =eventdetails;
+
+                    }
+                }
+            }
         }
 
         //[Route("EventLocation/{eventId}",Name = "EventLocation")]
@@ -188,6 +219,9 @@ namespace EventAppUI.Controllers
             
         }
 
+        
+      
+
         [NonAction]
         
         public async Task getAllStaffs()
@@ -207,6 +241,46 @@ namespace EventAppUI.Controllers
                 }
             }
 
+        }
+
+        [NonAction]
+        public async Task GetAllUsers()
+        {
+            List<User> Users = new List<User>();
+            using (var httpclient = new HttpClient())
+            {
+                using (var response = await httpclient.GetAsync($"{baseurl}/Account/GetAllUsers"))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var apiresponse = await response.Content.ReadAsStringAsync();
+                        Users = JsonConvert.DeserializeObject<List<User>>(apiresponse);
+                       ViewData["Users"] = Users;
+                           
+                    }
+                }
+            }
+        }
+
+       
+
+        [NonAction]
+        public async Task GetAllAccessInfo()
+        {
+            List<EventAccess> EventAccessInfo = new List<EventAccess>();
+            using (var httpclient = new HttpClient())
+            {
+                using (var response = await httpclient.GetAsync($"{baseurl}/access/GetAllAccessInfo"))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var apiresponse = await response.Content.ReadAsStringAsync();
+                        EventAccessInfo = JsonConvert.DeserializeObject<List<EventAccess>>(apiresponse);
+                        ViewData["AccessInfo"] = EventAccessInfo;
+
+                    }
+                }
+            }
         }
     }
 }
