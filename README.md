@@ -24,13 +24,13 @@ This is a basic website for managing events.
 
   ASP.Net Core MVC
   
-  ASP.NET Core Web API
+  ASP.NET Core Web API, Swagger
   
   C#
   
   HTML
   
-  CSS
+  CSS, Bootstrap
   
   Jquery
   
