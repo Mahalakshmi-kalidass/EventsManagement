@@ -4,6 +4,10 @@ This is a basic website for managing events.
 ![Screenshot 2024-07-10 101153](https://github.com/Mahalakshmi-kalidass/EventsManagement/assets/89296562/0c726f34-e6d6-4e9f-b885-7890d2765dd0)
 
 
+![image](https://github.com/user-attachments/assets/b8b28597-bebe-49a0-b1fc-c2ca235da5e1)
+
+
+
 **Features**
 
 **Create new events**: Users can add new events with a title, description, date and time.
