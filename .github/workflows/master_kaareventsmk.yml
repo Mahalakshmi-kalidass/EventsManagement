@@ -26,7 +26,10 @@ jobs:
         run: dotnet build --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run:
+            dotnet publish -c Release EventsDAL.csproj -o C:\Users\runneradmin\AppData\Local\Microsoft\dotnet\myapp\EventsDAL
+            dotnet publish -c Release EventAppUI.csproj -o C:\Users\runneradmin\AppData\Local\Microsoft\dotnet\myapp\EventAppUI
+            dotnet publish -c Release EventsServiceLayer.csproj -o C:\Users\runneradmin\AppData\Local\Microsoft\dotnet\myapp\EventsServiceLayer
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
