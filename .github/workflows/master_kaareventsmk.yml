@@ -27,15 +27,15 @@ jobs:
 
       - name: Publish EventsDAL
         run: cd C:\Users\Kaar User.KIPL2100\Documents\Power Platform Team Training\Events\EventsDAL
-             dotnet publish -c Release EventsDAL.csproj -o C:\Users\runneradmin\AppData\Local\Microsoft\dotnet\myapp\EventsDAL
+             --dotnet publish -c Release EventsDAL.csproj -o C:\Users\runneradmin\AppData\Local\Microsoft\dotnet\myapp\EventsDAL
 
       - name: Publish EventAppUI
         run: cd C:\Users\Kaar User.KIPL2100\Documents\Power Platform Team Training\Events\EventAppUI
-             dotnet publish -c Release EventAppUI.csproj -o C:\Users\runneradmin\AppData\Local\Microsoft\dotnet\myapp\EventAppUI
+             --dotnet publish -c Release EventAppUI.csproj -o C:\Users\runneradmin\AppData\Local\Microsoft\dotnet\myapp\EventAppUI
 
       - name: Publish EventsServiceLayer
         run: cd C:\Users\Kaar User.KIPL2100\Documents\Power Platform Team Training\Events\EventsServiceLayer
-             dotnet publish -c Release EventsServiceLayer.csproj -o C:\Users\runneradmin\AppData\Local\Microsoft\dotnet\myapp\EventsServiceLayer
+             --dotnet publish -c Release EventsServiceLayer.csproj -o C:\Users\runneradmin\AppData\Local\Microsoft\dotnet\myapp\EventsServiceLayer
       
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
