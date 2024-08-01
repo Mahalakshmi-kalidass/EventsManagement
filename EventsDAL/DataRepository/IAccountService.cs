@@ -16,5 +16,9 @@ namespace EventsDAL.DataRepository
         IEnumerable<User> GetAllUsers();
 
         bool SetUserRole(Guid userId, Role role);
+
+        Role? GetUserRole(string email);
+
+        bool IsUserExist(string email);
     }
 }

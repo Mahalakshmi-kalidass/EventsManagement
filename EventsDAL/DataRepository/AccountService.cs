@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,7 +28,15 @@ namespace EventsDAL.DataRepository
                     user.Id = Guid.NewGuid();
                     user.Email = userReg.Email;
                     user.UserName = userReg.FirstName + " " + userReg.LastName;
-                    user.Password = BCrypt.Net.BCrypt.HashPassword(userReg.Password);
+                    if(user.Password!=null)
+                    {
+                        user.Password = BCrypt.Net.BCrypt.HashPassword(userReg.Password);
+                    }
+                    else
+                    {
+                        user.Password = null;
+                    }
+                   
                     user.UserRole = null;
                     context.Users.Add(user);
                     context.SaveChanges();
@@ -97,6 +106,50 @@ namespace EventsDAL.DataRepository
                     }
                     return false;
                    
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message, ex);
+            }
+        }
+
+        public bool IsUserExist(string email)
+        {
+            try
+            {
+                using (var context = new EventContext())
+                {
+                    var existingUser = context.Users.Where(u => u.Email.Equals(email)).FirstOrDefault();
+                    if (existingUser != null)
+                    {
+                       
+                        return true;
+                    }
+                    return false;
+
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message, ex);
+            }
+        }
+
+        public Role? GetUserRole(string email)
+        {
+            try
+            {
+                using (var context = new EventContext())
+                {
+                    var existingUser = context.Users.Where(u => u.Email.Equals(email)).FirstOrDefault();
+                    if (existingUser != null)
+                    {
+
+                        return existingUser.UserRole;
+                    }
+                    return null;
+
                 }
             }
             catch (Exception ex)

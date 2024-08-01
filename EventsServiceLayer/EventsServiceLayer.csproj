@@ -15,6 +15,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EventsDAL\EventsDAL.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="EventsDAL">
       <HintPath>..\EventsDAL\bin\Debug\net8.0\EventsDAL.dll</HintPath>
     </Reference>

@@ -112,5 +112,49 @@ namespace EventsServiceLayer.Controllers
                 return NotFound();
             }
         }
+
+        [HttpGet]
+        [Route("UserExist/{email}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult UserExist(string email)
+        {
+            try
+            {
+                bool isSuccess = _acc.IsUserExist(email);
+                if (isSuccess)
+                {
+
+                    return Ok();
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(exception: ex, $"StatusCode: {StatusCodes.Status500InternalServerError}, Message:Internal server error ");
+                return NotFound();
+            }
+        }
+
+        [HttpGet]
+        [Route("GetUserRole/{email}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult GetUserRole(string email)
+        {
+            try
+            {
+                Role? UserRole = _acc.GetUserRole(email);
+                return Ok(UserRole);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(exception: ex, $"StatusCode: {StatusCodes.Status500InternalServerError}, Message:Internal server error ");
+                return NotFound();
+            }
+        }
     }
 }
