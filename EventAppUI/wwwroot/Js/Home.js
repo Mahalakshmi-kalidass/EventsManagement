@@ -7,7 +7,7 @@ $(document).ready(function () {
     
     function loadEventData(isEditable) {
         $.ajax({
-            url: 'https://localhost:44354/api/event/getallevent',
+            url: 'https://localhost:7239/api/event/getallevent',
             type: 'GET',
             success: function (data) {
                 console.log("I'm in");
@@ -106,7 +106,7 @@ $(document).ready(function () {
     //get user's accessible event and Build cards
     function fetchAndBuildEventrow(eventId, isEditable, container) {
         $.ajax({
-            url: `https://localhost:44354/api/event/getEventById/${eventId}`,
+            url: `https://localhost:7239/api/event/getEventById/${eventId}`,
             type: 'GET',
             success: function (data) {
 
@@ -127,7 +127,7 @@ $(document).ready(function () {
     //get the events that are accessible by the current logged In user 
     function fetchUserAccessibleEventAndBuild(isEditable, container) {
         $.ajax({
-            url: `https://localhost:44354/api/access/GetEventAccessForUser/${userId}`,
+            url: `https://localhost:7239/api/access/GetEventAccessForUser/${userId}`,
             type: 'GET',
             success: function (data) {
                 $.each(data, function (index, object) {
@@ -188,7 +188,7 @@ $(document).ready(function () {
         console.log("user : " + userId);
         console.log("event : " + eventId);
         $.ajax({
-            url: "https://localhost:44354/api/access/create",
+            url: "https://localhost:7239/api/access/create",
             type: 'POST',
             contentType: "application/json",
             data: JSON.stringify({
@@ -211,7 +211,7 @@ $(document).ready(function () {
         console.log("user : " + userId);
         console.log("event : " + eventId);
         $.ajax({
-            url: `https://localhost:44354/api/access/delete/${userId}/${eventId}`,
+            url: `https://localhost:7239/api/access/delete/${userId}/${eventId}`,
             type: 'DELETE',
             
             success: function (data) {
@@ -226,7 +226,7 @@ $(document).ready(function () {
     //ajax call to assign role to the user
     function setUserRole(userId, role) {
         $.ajax({
-            url: `https://localhost:44354/api/account/setUserRole/${userId}/${role}`,
+            url: `https://localhost:7239/api/account/setUserRole/${userId}/${role}`,
             type: 'PUT',
             success: function (data) {
                 console.log(data)

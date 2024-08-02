@@ -36,7 +36,7 @@
     }
     function getEventLocations() {
         $.ajax({
-            url: 'https://localhost:44354/api/Location/GetAllLocation',
+            url: 'https://localhost:7239/api/Location/GetAllLocation',
             type: 'GET',
             success: function (data) {
                 console.log(data);
